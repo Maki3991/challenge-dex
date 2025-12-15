@@ -89,12 +89,16 @@ contract DEX {
      * NOTE: if you are using a mapping liquidity, then you can use `return liquidity[lp]` to get the liquidity for a user.
      * NOTE: if you will be submitting the challenge make sure to implement this function as it is used in the tests.
      */
-    function getLiquidity(address lp) public view returns (uint256) {}
+    function getLiquidity(address lp) public view returns (uint256) {
+        return liquidity[lp];
+    }
 
     /**
      * @notice sends Ether to DEX in exchange for $BAL
      */
     function ethToToken() public payable returns (uint256 tokenOutput) {
+        require(msg.value > 0, "DEX: ethToToken - must send ETH to swap");
+
         uint256 xReserves = address(this).balance - msg.value;
         uint256 yReserves = token.balanceOf(address(this));
 
@@ -110,6 +114,8 @@ contract DEX {
      * @notice sends $BAL tokens to DEX in exchange for Ether
      */
     function tokenToEth(uint256 tokenInput) public returns (uint256 ethOutput) {
+        require(tokenInput > 0, "cannot swap 0 tokens");
+
         uint256 xReserves = token.balanceOf(address(this));
         uint256 yReserves = address(this).balance;
 
